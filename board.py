@@ -16,6 +16,13 @@ class Board:
 
     def move_piece(self,position,new_position):
         pass
+
+    def valid_moves_for(self, position):
+        piece = self.board[position[0]][position[1]]
+        if piece is None:
+            return []
+        return piece.valid_moves(self.board, position)
+    
     def display_board(self):
         print(end="  ")
         #print 1 to 9 
@@ -38,4 +45,4 @@ class Board:
 if __name__ == "__main__":
     test = Board()
     test.display_board()
-    print(test.board[6][6].valid_moves(test.board,(6,6))) 
+    print(test.valid_moves_for((6,6)))

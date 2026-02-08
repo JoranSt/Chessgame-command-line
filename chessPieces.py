@@ -9,14 +9,14 @@ class Piece:
 
 
 class Pawn(Piece):
-    def __init__(self, color, has_moved = False):
+    def __init__(self, color):
         super().__init__( color)
         #set symbol
         if(self.color.lower() == "white"):
             self.symbol = '♙'
         else:
             self.symbol = '♟'
-
+        
     #if on backrank promote
     def valid_moves(self, board, position):
         y,x = position
@@ -32,15 +32,16 @@ class Pawn(Piece):
             # two squares forward (only if first move is possible)
             if y == start_row and board[y + 2*direction][x] is None:
                 moves.append((y + 2*direction, x))
+        for nx in [x-1,x+1]:
+            if(0<nx<8 and board[ny][nx] is not None):
+                if board[ny][nx].color != self.color:
+                    moves.append((ny,nx))
 
         return moves
 
       
         
 
-    
-    def can_take(self, board, position, take_position):
-        pass
     
 class Rook(Piece):
     def __init__(self, color, has_moved = False):
@@ -52,7 +53,21 @@ class Rook(Piece):
             self.symbol = '♜'
             
     def valid_moves(self,board,position):
-        return super().valid_moves(board,position)
+        y, x = position
+        moves = []
+        directions = [(1,0),(-1,0),(0,1),(0,-1)]
+        for dy, dx in directions:
+            ny, nx = y+dy, x+dx
+
+            while 0<= ny < 8 and 0<=nx<8:
+                if(board[ny][nx] == None):
+                    moves.append((ny,nx))
+                else:
+                    break
+                ny += dy
+                nx += dx
+        return moves
+
     
 class Bishop(Piece):
     def __init__(self, color):
@@ -62,6 +77,8 @@ class Bishop(Piece):
             self.symbol = "♗"
         else:
             self.symbol = '♝'
+
+
     def valid_moves(self, board, position):
         return super().valid_moves(board, position)
 
