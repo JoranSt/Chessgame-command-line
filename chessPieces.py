@@ -63,6 +63,8 @@ class Rook(Piece):
                 if(board[ny][nx] == None):
                     moves.append((ny,nx))
                 else:
+                    if(board[ny][nx].color != self.color):
+                        moves.append((ny,nx))
                     break
                 ny += dy
                 nx += dx
@@ -80,7 +82,22 @@ class Bishop(Piece):
 
 
     def valid_moves(self, board, position):
-        return super().valid_moves(board, position)
+        y, x = position
+        moves = []
+        directions = [(1,1),(-1,-1),(-1,1),(1,-1)]
+        for dy, dx in directions:
+            ny, nx = y+dy, x+dx
+
+            while 0<= ny < 8 and 0<=nx<8:
+                if(board[ny][nx] == None):
+                    moves.append((ny,nx))
+                else:
+                    if(board[ny][nx].color != self.color):
+                        moves.append((ny,nx))
+                    break
+                ny += dy
+                nx += dx
+        return moves
 
 class Knight(Piece):
     def __init__(self, color):
@@ -92,7 +109,20 @@ class Knight(Piece):
             self.symbol = "♞"
 
     def valid_moves(self, board, position):
-        return super().valid_moves(board, position)
+        y, x = position
+        moves = []
+        directions = [(2,1),(2,-1),(-2,1),(-2,-1),(1,2),(-1,2),(-1,-2),(1,-2)]
+        for dy, dx in directions:
+            ny, nx = y+dy, x+dx
+
+            if 0<= ny < 8 and 0<=nx<8:
+                if(board[ny][nx] == None):
+                    moves.append((ny,nx))
+                else:
+                    if(board[ny][nx].color != self.color):
+                        moves.append((ny,nx))
+                    break
+        return moves
     
 class Queen(Piece):
     def __init__(self, color):
@@ -103,7 +133,22 @@ class Queen(Piece):
         else:
             self.symbol = "♛"
     def valid_moves(self, board, position):
-        return super().valid_moves(board, position)
+        y, x = position
+        moves = []
+        directions = [(1,0),(-1,0),(0,1),(0,-1),(1,1),(-1,-1),(-1,1),(1,-1)]
+        for dy, dx in directions:
+            ny, nx = y+dy, x+dx
+
+            while 0<= ny < 8 and 0<=nx<8:
+                if(board[ny][nx] == None):
+                    moves.append((ny,nx))
+                else:
+                    if(board[ny][nx].color != self.color):
+                        moves.append((ny,nx))
+                    break
+                ny += dy
+                nx += dx
+        return moves
 
 class King(Piece):
     def __init__(self, color, has_moved = False):
@@ -114,4 +159,16 @@ class King(Piece):
         else:
             self.symbol = "♚"
     def valid_moves(self, board, position):
-        return super().valid_moves(board, position)
+        y, x = position
+        moves = []
+        directions = [(1,0),(-1,0),(0,1),(0,-1),(1,1),(-1,-1),(-1,1),(1,-1)]
+        for dy, dx in directions:
+            ny, nx = y+dy, x+dx
+
+            if 0<= ny < 8 and 0<=nx<8:
+                if(board[ny][nx] == None):
+                    moves.append((ny,nx))
+                else:
+                    if(board[ny][nx].color != self.color):
+                        moves.append((ny,nx))
+        return moves

@@ -2,6 +2,7 @@ from chessPieces import *
 
 class Board:
     def __init__(self):
+        #initiate board and order
         self.board = [[None for _ in range(8)] for _ in range(8)]
         back_rank = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
         # white pieces
@@ -16,7 +17,15 @@ class Board:
 
     def move_piece(self,position,new_position):
         pass
-
+    
+    #for test purposes
+    def piece_info(self, position):
+        piece = self.board[position[0]][position[1]]
+        if piece is None:
+            return None, None
+        return piece.color, piece.symbol
+    
+    #passes variables to the chesspieces to check for validmoves
     def valid_moves_for(self, position):
         piece = self.board[position[0]][position[1]]
         if piece is None:
@@ -42,7 +51,11 @@ class Board:
                 else:
                     print( xy.symbol, end = '  ')
             print()
+
+
 if __name__ == "__main__":
     test = Board()
     test.display_board()
-    print(test.valid_moves_for((6,6)))
+    print(test.valid_moves_for((0,4)))
+    color, symbol = test.piece_info((0,4))
+    print(color, symbol)
