@@ -1,7 +1,8 @@
 class Piece:
-    def __init__(self, color):
+    def __init__(self, color, checks = False):
         self.color = color
         self.symbol = ' '
+        self.checks = checks
 
     def valid_moves(self, board, position):
         raise NotImplementedError("Must be overriden in subclass")
@@ -10,7 +11,7 @@ class Piece:
 
 class Pawn(Piece):
     def __init__(self, color):
-        super().__init__( color)
+        super().__init__(color)
         #set symbol
         if(self.color.lower() == "black"):
             self.symbol = '♙'
@@ -33,9 +34,16 @@ class Pawn(Piece):
             if y == start_row and board[y + 2*direction][x] is None:
                 moves.append((y + 2*direction, x))
         for nx in [x-1,x+1]:
-            if(0<nx<8 and board[ny][nx] is not None):
-                if board[ny][nx].color != self.color:
+            #try is there because it throws an error on empty spaces, it checks if a pawn can check and appends it to the validmoves list
+            try:
+                if(0<nx<8 and board[ny][nx].color != self.color):
+                    if(board[ny][nx].__class__.__name__ == "King"):
+                        self.checks = True
+                    else:
+                        self.checks = False
                     moves.append((ny,nx))
+            except:
+                pass
 
         return moves
 
@@ -44,7 +52,7 @@ class Pawn(Piece):
 
     
 class Rook(Piece):
-    def __init__(self, color, has_moved = False):
+    def __init__(self, color, checks = False, has_moved = False):
         super().__init__(color)
         #set symbol
         if(self.color.lower() == "black"):
@@ -72,7 +80,7 @@ class Rook(Piece):
 
     
 class Bishop(Piece):
-    def __init__(self, color):
+    def __init__(self, color, checks = False):
         super().__init__(color)
         #set symbol
         if(self.color.lower() == "black"):
@@ -100,7 +108,7 @@ class Bishop(Piece):
         return moves
 
 class Knight(Piece):
-    def __init__(self, color):
+    def __init__(self, color, checks = False):
         super().__init__(color)
         #set symbol
         if(self.color.lower() == "black"):
@@ -125,7 +133,7 @@ class Knight(Piece):
         return moves
     
 class Queen(Piece):
-    def __init__(self, color):
+    def __init__(self, color, checks = False):
         super().__init__(color)
         #set symbol
         if (self.color.lower() == "black"):
