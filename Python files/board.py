@@ -8,11 +8,11 @@ class Board:
         # white pieces
         for x in range(8):
             self.board[7][x] = back_rank[x]("white")
-            self.board[6][x] = Pawn("white")
+            # self.board[6][x] = Pawn("white")
 
         # black pieces
         for x in range(8):
-            self.board[1][x] = Pawn("black")
+            # self.board[1][x] = Pawn("black")
             self.board[0][x] = back_rank[x]("black")
         
 
@@ -29,7 +29,7 @@ class Board:
             if (ny,nx) in moves:
                 self.board[ny][nx] = piece
                 self.board[y][x] = None
-
+                piece.valid_moves(self.board,new_position)
                 return f'{piece.__class__.__name__} moved from {chr(y+65)}{x+1} to {chr(ny+65)}{nx+1}'
             
     @staticmethod
@@ -89,7 +89,9 @@ class Board:
                     else:
                         piece = self.board[y][x]
                     if piece.checks == True and piece.color != turn:
-                        return f'{piece.color} {piece.__class__.__name__} is checked'
+                        # return f'{piece.color} {piece.__class__.__name__} is checked'
+                        return True
+            return False
                     
                 
 

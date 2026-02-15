@@ -12,7 +12,9 @@ class Chess:
     def play(self):
         while True:
             self.board.display_board()
-            print(self.board.is_check(self.turn))
+            #checks if the side whos turn it is is checked
+            check = self.board.is_check(self.turn)
+            print(check)
             move = input("Enter move in the form of B1D1\n")
             movesplit = list(move)
 
