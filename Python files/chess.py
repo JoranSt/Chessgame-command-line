@@ -12,13 +12,16 @@ class Chess:
     def play(self):
         while True:
             self.board.display_board()
+            print(self.board.is_check(self.turn))
             move = input("Enter move in the form of B1D1\n")
             movesplit = list(move)
-            print(movesplit)
+
             try:
+                #splits the input and gives itto the move piece function in the board class
                 coordinates = self.board.unicode_to_index(movesplit)
                 print(self.board.move_piece([coordinates[0],coordinates[1]], [coordinates[2],coordinates[3]], self.turn))
                 self.turn = "black" if self.turn == "white" else "white"
+                print("\n")
             except:
                 print("Input unvalid please try again")
 
