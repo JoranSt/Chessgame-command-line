@@ -119,18 +119,33 @@ class Knight(Piece):
     def valid_moves(self, board, position):
         y, x = position
         moves = []
+        self.checks = False
         directions = [(2,1),(2,-1),(-2,1),(-2,-1),(1,2),(-1,2),(-1,-2),(1,-2)]
         for dy, dx in directions:
             ny, nx = y+dy, x+dx
 
-            if 0<= ny < 8 and 0<=nx<8:
-                if(board[ny][nx] == None):
-                    moves.append((ny,nx))
-                else:
-                    if(board[ny][nx].color != self.color):
-                        moves.append((ny,nx))
-                    
+            if not (0<= ny <8 and 0<= nx <8):
+                continue
+            
+            target = board[ny][nx]
+            
+            if target == None:
+                moves.append((ny,nx))
+                continue
+
+            if target.color == self.color:
+                continue
+
+            if isinstance(target, King):
+                self.checks = True
+
+            moves.append((ny,nx))
+
         return moves
+
+
+
+
     
 class Queen(Piece):
     def __init__(self, color, checks = False):
@@ -142,20 +157,41 @@ class Queen(Piece):
             self.symbol = "♛"
     def valid_moves(self, board, position):
         y, x = position
+        self.checks = False
         moves = []
         directions = [(1,0),(-1,0),(0,1),(0,-1),(1,1),(-1,-1),(-1,1),(1,-1)]
+        #loops over all the directions
         for dy, dx in directions:
-            ny, nx = y+dy, x+dx
+            y, x = y+dy, x+dx
 
-            while 0<= ny < 8 and 0<=nx<8:
-                if(board[ny][nx] == None):
-                    moves.append((ny,nx))
-                else:
-                    if(board[ny][nx].color != self.color):
-                        moves.append((ny,nx))
+            if not 0<= y <8 and 0<= x <8:
+                continue
+            #checks on every direction path instead of just the direction
+            while 0<= y < 8 and 0<= x <8:
+                target = board[y][x]
+
+                if target == None:
+                    moves.append((y,x))
+                    y, x = y+dy, x+dx
+                    continue
+
+                if isinstance(target, King):
+                    self.checks = True
                     break
-                ny += dy
-                nx += dx
+
+                if target.color != self.color:
+                    moves.append((y,x))
+                    break
+                
+                else: 
+                    break
+        return moves
+                
+                    
+
+                
+
+
         return moves
 
 class King(Piece):
