@@ -12,7 +12,7 @@ class Pawn(Piece):
     def __init__(self, color):
         super().__init__( color)
         #set symbol
-        if(self.color.lower() == "white"):
+        if(self.color.lower() == "black"):
             self.symbol = '♙'
         else:
             self.symbol = '♟'
@@ -47,7 +47,7 @@ class Rook(Piece):
     def __init__(self, color, has_moved = False):
         super().__init__(color)
         #set symbol
-        if(self.color.lower() == "white"):
+        if(self.color.lower() == "black"):
             self.symbol = '♖'
         else:
             self.symbol = '♜'
@@ -75,7 +75,7 @@ class Bishop(Piece):
     def __init__(self, color):
         super().__init__(color)
         #set symbol
-        if(self.color.lower() == "white"):
+        if(self.color.lower() == "black"):
             self.symbol = "♗"
         else:
             self.symbol = '♝'
@@ -103,7 +103,7 @@ class Knight(Piece):
     def __init__(self, color):
         super().__init__(color)
         #set symbol
-        if(self.color.lower() == "white"):
+        if(self.color.lower() == "black"):
             self.symbol = "♘"
         else:
             self.symbol = "♞"
@@ -128,7 +128,7 @@ class Queen(Piece):
     def __init__(self, color):
         super().__init__(color)
         #set symbol
-        if (self.color.lower() == "white"):
+        if (self.color.lower() == "black"):
             self.symbol = "♕"
         else:
             self.symbol = "♛"
@@ -154,7 +154,7 @@ class King(Piece):
     def __init__(self, color, has_moved = False):
         super().__init__(color)
         #set symbol
-        if(self.color.lower() == "white"):
+        if(self.color.lower() == "black"):
             self.symbol = "♔"
         else:
             self.symbol = "♚"
