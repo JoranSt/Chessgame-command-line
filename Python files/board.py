@@ -14,9 +14,32 @@ class Board:
         for x in range(8):
             self.board[1][x] = Pawn("black")
             self.board[0][x] = back_rank[x]("black")
+        
 
-    def move_piece(self,position,new_position):
-        pass
+    def move_piece(self,position,new_position, turn):
+        y,x = position
+        ny,nx = new_position
+        piece = self.board[y][x]
+        print(piece)
+        if piece is None:
+            return "Not a valid Piece"
+        else:
+            moves = piece.valid_moves(self.board, position)
+            print(moves)
+            if (ny,nx) in moves:
+                self.board[ny][nx] = piece
+                self.board[y][x] = None
+            
+    @staticmethod
+    def unicode_to_index(symbols):
+        coordinates = []
+        for x in symbols:
+            try:
+                coordinates.append(int(x)-1)
+            except:
+                coordinates.append(ord(x.upper()) - 65)
+        return coordinates
+                                      
     
     #for test purposes
     def piece_info(self, position):
