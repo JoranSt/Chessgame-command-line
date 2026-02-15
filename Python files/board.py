@@ -1,5 +1,5 @@
 from chessPieces import *
-
+import os 
 class Board:
     def __init__(self):
         #initiate board and order
@@ -17,11 +17,11 @@ class Board:
         
 
     def move_piece(self,position,new_position, turn):
+        #get the position and new position and look if move is allowed
         y,x = position
         ny,nx = new_position
         piece = self.board[y][x]
-        print(piece)
-        if piece is None:
+        if piece is None or piece.color != turn:
             return "Not a valid Piece"
         else:
             moves = piece.valid_moves(self.board, position)
@@ -29,9 +29,12 @@ class Board:
             if (ny,nx) in moves:
                 self.board[ny][nx] = piece
                 self.board[y][x] = None
+
+                return f'{piece.__class__.__name__} moved from {chr(y+65)}{x+1} to {chr(ny+65)}{nx+1}'
             
     @staticmethod
     def unicode_to_index(symbols):
+        #changes the input from strings to coordinates using unicode
         coordinates = []
         for x in symbols:
             try:
@@ -75,6 +78,20 @@ class Board:
                     print( xy.symbol, end = '  ')
             print()
 
+    def is_check(self, turn, new_position = None): 
+        if(new_position != None):
+            pass
+        else:
+            for x in range(7):
+                for y in range(7):
+                    if self.board[y][x] is None:
+                        continue
+                    else:
+                        piece = self.board[y][x]
+                    if piece.checks == True and piece.color != turn:
+                        return f'{piece.color} {piece.__class__.__name__} is checked'
+                    
+                
 
 if __name__ == "__main__":
     test = Board()
