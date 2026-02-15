@@ -121,7 +121,7 @@ class Knight(Piece):
                 else:
                     if(board[ny][nx].color != self.color):
                         moves.append((ny,nx))
-                    break
+                    
         return moves
     
 class Queen(Piece):
