@@ -36,7 +36,7 @@ class Pawn(Piece):
         for nx in [x-1,x+1]:
             #try is there because it throws an error on empty spaces, it checks if a pawn can check and appends it to the validmoves list
             try:
-                if(0<nx<8 and board[ny][nx].color != self.color):
+                if(0<=nx<8 and board[ny][nx].color != self.color):
                     if(board[ny][nx].__class__.__name__ == "King"):
                         self.checks = True
                     else:
@@ -66,16 +66,16 @@ class Rook(Piece):
         directions = [(1,0),(-1,0),(0,1),(0,-1)]
         for dy, dx in directions:
             ny, nx = y+dy, x+dx
-            if not (0<= ny <8 and 0<= nx <8):
-                while 0<= ny < 8 and 0<=nx<8:
-                    if(board[ny][nx] == None):
+
+            while 0<= ny < 8 and 0<=nx<8:
+                if(board[ny][nx] == None):
+                    moves.append((ny,nx))
+                else:
+                    if(board[ny][nx].color != self.color):
                         moves.append((ny,nx))
-                    else:
-                        if(board[ny][nx].color != self.color):
-                            moves.append((ny,nx))
-                        break
-                    ny += dy
-                    nx += dx
+                    break
+                ny += dy
+                nx += dx
         return moves
 
     
@@ -95,16 +95,16 @@ class Bishop(Piece):
         directions = [(1,1),(-1,-1),(-1,1),(1,-1)]
         for dy, dx in directions:
             ny, nx = y+dy, x+dx
-            if not (0<= ny <8 and 0<= nx <8):
-                while 0<= ny < 8 and 0<=nx<8:
-                    if(board[ny][nx] == None):
+            
+            while 0<= ny < 8 and 0<=nx<8:
+                if(board[ny][nx] == None):
+                    moves.append((ny,nx))
+                else:
+                    if(board[ny][nx].color != self.color):
                         moves.append((ny,nx))
-                    else:
-                        if(board[ny][nx].color != self.color):
-                            moves.append((ny,nx))
-                        break
-                    ny += dy
-                    nx += dx
+                    break
+                ny += dy
+                nx += dx
         return moves
 
 class Knight(Piece):
