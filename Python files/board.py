@@ -8,11 +8,11 @@ class Board:
         # white pieces
         for x in range(8):
             self.board[7][x] = back_rank[x]("white")
-            # self.board[6][x] = Pawn("white")
+            self.board[6][x] = Pawn("white")
 
         # black pieces
         for x in range(8):
-            # self.board[1][x] = Pawn("black")
+            self.board[1][x] = Pawn("black")
             self.board[0][x] = back_rank[x]("black")
         
 

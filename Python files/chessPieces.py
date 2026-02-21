@@ -66,16 +66,16 @@ class Rook(Piece):
         directions = [(1,0),(-1,0),(0,1),(0,-1)]
         for dy, dx in directions:
             ny, nx = y+dy, x+dx
-
-            while 0<= ny < 8 and 0<=nx<8:
-                if(board[ny][nx] == None):
-                    moves.append((ny,nx))
-                else:
-                    if(board[ny][nx].color != self.color):
+            if not (0<= ny <8 and 0<= nx <8):
+                while 0<= ny < 8 and 0<=nx<8:
+                    if(board[ny][nx] == None):
                         moves.append((ny,nx))
-                    break
-                ny += dy
-                nx += dx
+                    else:
+                        if(board[ny][nx].color != self.color):
+                            moves.append((ny,nx))
+                        break
+                    ny += dy
+                    nx += dx
         return moves
 
     
@@ -95,16 +95,16 @@ class Bishop(Piece):
         directions = [(1,1),(-1,-1),(-1,1),(1,-1)]
         for dy, dx in directions:
             ny, nx = y+dy, x+dx
-
-            while 0<= ny < 8 and 0<=nx<8:
-                if(board[ny][nx] == None):
-                    moves.append((ny,nx))
-                else:
-                    if(board[ny][nx].color != self.color):
+            if not (0<= ny <8 and 0<= nx <8):
+                while 0<= ny < 8 and 0<=nx<8:
+                    if(board[ny][nx] == None):
                         moves.append((ny,nx))
-                    break
-                ny += dy
-                nx += dx
+                    else:
+                        if(board[ny][nx].color != self.color):
+                            moves.append((ny,nx))
+                        break
+                    ny += dy
+                    nx += dx
         return moves
 
 class Knight(Piece):
@@ -162,17 +162,17 @@ class Queen(Piece):
         directions = [(1,0),(-1,0),(0,1),(0,-1),(1,1),(-1,-1),(-1,1),(1,-1)]
         #loops over all the directions
         for dy, dx in directions:
-            y, x = y+dy, x+dx
+            ny, nx = y+dy, x+dx
 
-            if not 0<= y <8 and 0<= x <8:
+            if not (0<= ny <8 and 0<= nx <8):
                 continue
             #checks on every direction path instead of just the direction
-            while 0<= y < 8 and 0<= x <8:
-                target = board[y][x]
+            while 0<= ny < 8 and 0<= nx <8:
+                target = board[ny][nx]
 
                 if target == None:
-                    moves.append((y,x))
-                    y, x = y+dy, x+dx
+                    moves.append((ny,nx))
+                    ny, nx = ny+dy, nx+dx
                     continue
 
                 if isinstance(target, King):
@@ -180,7 +180,7 @@ class Queen(Piece):
                     break
 
                 if target.color != self.color:
-                    moves.append((y,x))
+                    moves.append((ny,nx))
                     break
                 
                 else: 
@@ -188,11 +188,6 @@ class Queen(Piece):
         return moves
                 
                     
-
-                
-
-
-        return moves
 
 class King(Piece):
     def __init__(self, color, has_moved = False):
