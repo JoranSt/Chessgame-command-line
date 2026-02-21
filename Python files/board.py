@@ -82,8 +82,8 @@ class Board:
         if(new_position != None):
             pass
         else:
-            for x in range(7):
-                for y in range(7):
+            for x in range(8):
+                for y in range(8):
                     if self.board[y][x] is None:
                         continue
                     else:
