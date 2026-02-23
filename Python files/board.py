@@ -22,15 +22,16 @@ class Board:
         ny,nx = new_position
         piece = self.board[y][x]
         if piece is None or piece.color != turn:
-            return "Not a valid Piece"
+            return False
         else:
             moves = piece.valid_moves(self.board, position)
-            print(moves)
             if (ny,nx) in moves:
                 self.board[ny][nx] = piece
                 self.board[y][x] = None
                 piece.valid_moves(self.board,new_position)
-                return f'{piece.__class__.__name__} moved from {chr(y+65)}{x+1} to {chr(ny+65)}{nx+1}'
+                return True 
+            else:
+                return False
             
     @staticmethod
     def unicode_to_index(symbols):
