@@ -1,5 +1,5 @@
 from chessPieces import *
-import os 
+from copy import deepcopy
 class Board:
     def __init__(self):
         #initiate board and order
@@ -8,11 +8,11 @@ class Board:
         # white pieces
         for x in range(8):
             self.board[7][x] = back_rank[x]("white")
-           # self.board[6][x] = Pawn("white")
+            self.board[6][x] = Pawn("white")
 
         # black pieces
         for x in range(8):
-            #self.board[1][x] = Pawn("black")
+            self.board[1][x] = Pawn("black")
             self.board[0][x] = back_rank[x]("black")
         
 
@@ -21,17 +21,25 @@ class Board:
         y,x = position
         ny,nx = new_position
         piece = self.board[y][x]
-        if piece is None or piece.color != turn:
-            return False
-        else:
-            moves = piece.valid_moves(self.board, position)
-            if (ny,nx) in moves:
-                self.board[ny][nx] = piece
-                self.board[y][x] = None
-                piece.valid_moves(self.board,new_position)
-                return True 
-            else:
-                return False
+        boardcopy = deepcopy(self.board) #used for simulations to see if it puts the king in check
+        if piece is None:
+            return "no_piece"
+        
+        if piece.color != turn:
+            return "wrong_turn"
+        
+        moves = piece.valid_moves(self.board, position)
+        if (ny,nx) in moves:
+            boardcopy[ny][nx] = piece
+            boardcopy[y][x] = None
+            if(self.is_check(turn, boardcopy) == True):
+                return "king_in_check"
+            
+            self.board[ny][nx] = piece
+            self.board[y][x] = None 
+            return "ok" 
+        
+        return "invalid_target"
             
     @staticmethod
     def unicode_to_index(symbols):
@@ -78,18 +86,43 @@ class Board:
                 else:
                     print( xy.symbol, end = '  ')
             print()
-
-    def find_king(self, color):
+            
+    def has_legal_moves(self, turn):
         for y in range(8):
             for x in range(8):
-                target = self.board[y][x]
+                piece = self.board[y][x]
+                if(piece is not None and piece.color == turn):
+                    valid_moves = piece.valid_moves(self.board, [y,x])
+                    for ny,nx in valid_moves:
+                        boardcopy = deepcopy(self.board) #used for simulations to see if it puts the king in check
+                        boardcopy[ny][nx] = piece
+                        boardcopy[y][x] = None
+                        if(self.is_check(turn, boardcopy) == False):
+                            print(piece.__class__.__name__ ,y,x,  ny,nx)
+                            return True
+                                       
+        return False
+                            
+        
+
+    def find_king(self, color, board=None):
+        if(board == None):
+            board = self.board
+        for y in range(8):
+            for x in range(8):
+                target = board[y][x]
                 if target is not None and target.color == color and isinstance(target, King):
                     return (y, x)
                 
                   
-    def is_check(self, color):
+    def is_check(self, color, board = None):
+        if board is None:
+            board = self.board
+        
+    
+    
         #check if the king is checked
-        kingsposition = self.find_king(color)
+        kingsposition = self.find_king(color, board)
         if kingsposition is None:
             raise ValueError(f"No {color} king found on the board!")
                     
@@ -103,7 +136,7 @@ class Board:
             ny, nx = ky + dy, kx + dx
             while 0<=ny<8 and 0<=nx<8:
                 
-                target = self.board[ny][nx]
+                target = board[ny][nx]
                 if target is None:
                     ny += dy
                     nx += dx
@@ -113,6 +146,7 @@ class Board:
                     break
                 
                 if(isinstance(target, Queen) or isinstance(target, Rook)):
+                    print(f"King at {(ky,kx)} would be attacked by {target.symbol} at {(ny,nx)}")
                     return True
                     
                 ny += dy
@@ -123,7 +157,7 @@ class Board:
             ny, nx = ky + dy, kx + dx
             while 0<=ny<8 and 0<=nx<8:
                 
-                target = self.board[ny][nx]
+                target = board[ny][nx]
                 if target is None:
                     ny += dy
                     nx += dx
@@ -143,7 +177,7 @@ class Board:
             ny, nx = ky+dy, kx+dx
             
             if (0 <= ny <8 and 0 <= nx <8):
-                target = self.board[ny][nx]
+                target = board[ny][nx]
                 if isinstance(target, Knight) and target.color != color:
                     return True
                 
@@ -155,13 +189,19 @@ class Board:
         for dy, dx in pawn_offsets:
             ny, nx = ky + dy, kx + dx
             if 0 <= ny < 8 and 0 <= nx < 8:
-                target = self.board[ny][nx]
+                target = board[ny][nx]
                 if isinstance(target, Pawn) and target.color != color:
                     return True   
                 
         return False
             
+    def checkmate(self, color):
+        return  self.is_check(color) and not self.has_legal_moves(color)
+    
+    def stalemate(self, color):
+        return not self.is_check(color) and not self.has_legal_moves(color)
                     
+                       
                     
                     
          
