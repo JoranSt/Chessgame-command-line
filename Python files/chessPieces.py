@@ -1,8 +1,7 @@
 class Piece:
-    def __init__(self, color, checks = False):
+    def __init__(self, color):
         self.color = color
         self.symbol = ' '
-        self.checks = checks
 
     def valid_moves(self, board, position):
         raise NotImplementedError("Must be overriden in subclass")
@@ -12,7 +11,6 @@ class Piece:
 class Pawn(Piece):
     def __init__(self, color):
         super().__init__(color)
-        self.checks = False
         #set symbol
         if(self.color.lower() == "black"):
             self.symbol = '♙'
@@ -21,7 +19,6 @@ class Pawn(Piece):
         
     #if on backrank promote
     def valid_moves(self, board, position):
-        self.checks = False
         y,x = position
         moves = []
         direction = -1 if self.color == "white" else 1
@@ -36,13 +33,10 @@ class Pawn(Piece):
             if y == start_row and board[y + 2*direction][x] is None:
                 moves.append((y + 2*direction, x))
         for nx in [x-1,x+1]:
-            #try is there because it throws an error on empty spaces, it checks if a pawn can check and appends it to the validmoves list
+            #try is there because it throws an error on empty spaces, it checks if a pawn can capture a piece and appends it to the validmoves list
+            target = board[ny][nx]
             try:
-                if(0<=nx<8 and board[ny][nx].color != self.color):
-                    if(board[ny][nx].__class__.__name__ == "King"):
-                        self.checks = True
-                    else:
-                        self.checks = False
+                if(0<=nx<8 and target != self.color):
                     moves.append((ny,nx))
             except:
                 pass
@@ -56,7 +50,6 @@ class Pawn(Piece):
 class Rook(Piece):
     def __init__(self, color, has_moved = False):
         super().__init__(color)
-        self.checks = False
         #set symbol
         if(self.color.lower() == "black"):
             self.symbol = '♖'
@@ -64,20 +57,22 @@ class Rook(Piece):
             self.symbol = '♜'
             
     def valid_moves(self,board,position):
-        self.checks = False
         y, x = position
         moves = []
         directions = [(1,0),(-1,0),(0,1),(0,-1)]
+        
         for dy, dx in directions:
+            
             ny, nx = y+dy, x+dx
-
+            
+            #loops over while inside the board range and stops when it hits a piece
             while 0<= ny < 8 and 0<=nx<8:
-                if(board[ny][nx] == None):
+                target = board[ny][nx]
+                if(target == None):
                     moves.append((ny,nx))
                 else:
-                    if(board[ny][nx].color != self.color):
-                        if(board[ny][nx].__class__.__name__ == "King"):
-                            self.checks = True
+                    #checks if its a capturable piece
+                    if(target.color != self.color):
                         moves.append((ny,nx))
                     break
                 ny += dy
@@ -102,14 +97,13 @@ class Bishop(Piece):
         directions = [(1,1),(-1,-1),(-1,1),(1,-1)]
         for dy, dx in directions:
             ny, nx = y+dy, x+dx
-            
+            #loops over while inside the board range and stops when it hits a piece
             while 0<= ny < 8 and 0<=nx<8:
-                if(board[ny][nx] == None):
+                target = board[ny][nx]
+                if(target == None):
                     moves.append((ny,nx))
                 else:
-                    if(board[ny][nx].color != self.color):
-                        if(board[ny][nx].__class__.__name__ == "King"):
-                            self.checks = True
+                    if(target.color != self.color):
                         moves.append((ny,nx))
                     break
                 ny += dy
@@ -117,7 +111,7 @@ class Bishop(Piece):
         return moves
 
 class Knight(Piece):
-    def __init__(self, color, checks = False):
+    def __init__(self, color):
         super().__init__(color)
         #set symbol
         if(self.color.lower() == "black"):
@@ -128,27 +122,17 @@ class Knight(Piece):
     def valid_moves(self, board, position):
         y, x = position
         moves = []
-        self.checks = False
         directions = [(2,1),(2,-1),(-2,1),(-2,-1),(1,2),(-1,2),(-1,-2),(1,-2)]
         for dy, dx in directions:
+            #checks if the move is legal on all directions
             ny, nx = y+dy, x+dx
 
-            if not (0<= ny <8 and 0<= nx <8):
-                continue
-            
-            target = board[ny][nx]
-            
-            if target == None:
-                moves.append((ny,nx))
-                continue
-
-            if target.color == self.color:
-                continue
-
-            if isinstance(target, King):
-                self.checks = True
-
-            moves.append((ny,nx))
+            if (0<= ny <8 and 0<= nx <8):
+                
+                target = board[ny][nx]
+                
+                if target == None or target.color != self.color:
+                    moves.append((ny,nx))
 
         return moves
 
@@ -157,8 +141,9 @@ class Knight(Piece):
 
     
 class Queen(Piece):
-    def __init__(self, color, checks = False):
+    def __init__(self, color):
         super().__init__(color)
+        
         #set symbol
         if (self.color.lower() == "black"):
             self.symbol = "♕"
@@ -166,7 +151,6 @@ class Queen(Piece):
             self.symbol = "♛"
     def valid_moves(self, board, position):
         y, x = position
-        self.checks = False
         moves = []
         directions = [(1,0),(-1,0),(0,1),(0,-1),(1,1),(-1,-1),(-1,1),(1,-1)]
         #loops over all the directions
@@ -175,7 +159,7 @@ class Queen(Piece):
 
             if not (0<= ny <8 and 0<= nx <8):
                 continue
-            #checks on every direction path instead of just the direction
+            #checks for legal moves on every direction path instead of just the direction and stops at a piece
             while 0<= ny < 8 and 0<= nx <8:
                 target = board[ny][nx]
 
@@ -183,17 +167,12 @@ class Queen(Piece):
                     moves.append((ny,nx))
                     ny, nx = ny+dy, nx+dx
                     continue
-
-                if isinstance(target, King):
-                    self.checks = True
-                    break
-
-                if target.color != self.color:
-                    moves.append((ny,nx))
+                
+                if target.color == self.color:
                     break
                 
-                else: 
-                    break
+                moves.append((ny,nx)) 
+                break
         return moves
                 
                     
@@ -211,12 +190,13 @@ class King(Piece):
         moves = []
         directions = [(1,0),(-1,0),(0,1),(0,-1),(1,1),(-1,-1),(-1,1),(1,-1)]
         for dy, dx in directions:
+            #checks for valid moves it doesnt check for checks right now because those are stored within the pieces.
             ny, nx = y+dy, x+dx
+            
+            
 
             if 0<= ny < 8 and 0<=nx<8:
-                if(board[ny][nx] == None):
+                target = board[ny][nx]
+                if(target == None or target.color != self.color):
                     moves.append((ny,nx))
-                else:
-                    if(board[ny][nx].color != self.color):
-                        moves.append((ny,nx))
         return moves
