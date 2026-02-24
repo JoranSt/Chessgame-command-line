@@ -12,6 +12,7 @@ class Piece:
 class Pawn(Piece):
     def __init__(self, color):
         super().__init__(color)
+        self.checks = False
         #set symbol
         if(self.color.lower() == "black"):
             self.symbol = '♙'
@@ -20,6 +21,7 @@ class Pawn(Piece):
         
     #if on backrank promote
     def valid_moves(self, board, position):
+        self.checks = False
         y,x = position
         moves = []
         direction = -1 if self.color == "white" else 1
@@ -52,8 +54,9 @@ class Pawn(Piece):
 
     
 class Rook(Piece):
-    def __init__(self, color, checks = False, has_moved = False):
+    def __init__(self, color, has_moved = False):
         super().__init__(color)
+        self.checks = False
         #set symbol
         if(self.color.lower() == "black"):
             self.symbol = '♖'
@@ -61,6 +64,7 @@ class Rook(Piece):
             self.symbol = '♜'
             
     def valid_moves(self,board,position):
+        self.checks = False
         y, x = position
         moves = []
         directions = [(1,0),(-1,0),(0,1),(0,-1)]
@@ -72,6 +76,8 @@ class Rook(Piece):
                     moves.append((ny,nx))
                 else:
                     if(board[ny][nx].color != self.color):
+                        if(board[ny][nx].__class__.__name__ == "King"):
+                            self.checks = True
                         moves.append((ny,nx))
                     break
                 ny += dy
@@ -80,8 +86,9 @@ class Rook(Piece):
 
     
 class Bishop(Piece):
-    def __init__(self, color, checks = False):
+    def __init__(self, color):
         super().__init__(color)
+        self.checks = False
         #set symbol
         if(self.color.lower() == "black"):
             self.symbol = "♗"
@@ -101,6 +108,8 @@ class Bishop(Piece):
                     moves.append((ny,nx))
                 else:
                     if(board[ny][nx].color != self.color):
+                        if(board[ny][nx].__class__.__name__ == "King"):
+                            self.checks = True
                         moves.append((ny,nx))
                     break
                 ny += dy
