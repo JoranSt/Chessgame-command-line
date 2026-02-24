@@ -8,11 +8,11 @@ class Board:
         # white pieces
         for x in range(8):
             self.board[7][x] = back_rank[x]("white")
-            self.board[6][x] = Pawn("white")
+           # self.board[6][x] = Pawn("white")
 
         # black pieces
         for x in range(8):
-            self.board[1][x] = Pawn("black")
+            #self.board[1][x] = Pawn("black")
             self.board[0][x] = back_rank[x]("black")
         
 
@@ -50,7 +50,7 @@ class Board:
         piece = self.board[position[0]][position[1]]
         if piece is None:
             return None, None
-        return piece.color, piece.symbol
+        return piece.color, piece.__class__.__name__
     
     #passes variables to the chesspieces to check for validmoves
     def valid_moves_for(self, position):
@@ -79,20 +79,93 @@ class Board:
                     print( xy.symbol, end = '  ')
             print()
 
-    def is_check(self, turn, new_position = None): 
-        if(new_position != None):
-            pass
-        else:
+    def find_king(self, color):
+        for y in range(8):
             for x in range(8):
-                for y in range(8):
-                    if self.board[y][x] is None:
-                        continue
-                    else:
-                        piece = self.board[y][x]
-                    if piece.checks == True and piece.color != turn:
-                        # return f'{piece.color} {piece.__class__.__name__} is checked'
-                        return True
-            return False
+                target = self.board[y][x]
+                if target is not None and target.color == color and isinstance(target, King):
+                    return (y, x)
+                
+                  
+    def is_check(self, color):
+        #check if the king is checked
+        kingsposition = self.find_king(color)
+        if kingsposition is None:
+            raise ValueError(f"No {color} king found on the board!")
+                    
+                    
+        straightdirections = [(1,0),(-1,0),(0,1),(0,-1)]
+        diagonaldirections = [(1,1),(-1,-1),(-1,1),(1,-1)]
+        knightdirections = [(2,1),(2,-1),(-2,1),(-2,-1),(1,2),(-1,2),(-1,-2),(1,-2)]
+        ky, kx = kingsposition
+        #checks every line direction for attack
+        for dy,dx in straightdirections:
+            ny, nx = ky + dy, kx + dx
+            while 0<=ny<8 and 0<=nx<8:
+                
+                target = self.board[ny][nx]
+                if target is None:
+                    ny += dy
+                    nx += dx
+                    continue
+                
+                if target.color == color:
+                    break
+                
+                if(isinstance(target, Queen) or isinstance(target, Rook)):
+                    return True
+                    
+                ny += dy
+                nx += dx
+                    
+        #checks diagonal lines for check
+        for dy,dx in diagonaldirections:
+            ny, nx = ky + dy, kx + dx
+            while 0<=ny<8 and 0<=nx<8:
+                
+                target = self.board[ny][nx]
+                if target is None:
+                    ny += dy
+                    nx += dx
+                    continue
+                
+                if target.color == color:
+                    break
+                
+                if(isinstance(target, Queen) or isinstance(target, Bishop)):
+                    return True
+                    
+                ny += dy
+                nx += dx
+                
+        #checks if knights are putting the king in check
+        for dy, dx in knightdirections:
+            ny, nx = ky+dy, kx+dx
+            
+            if (0 <= ny <8 and 0 <= nx <8):
+                target = self.board[ny][nx]
+                if isinstance(target, Knight) and target.color != color:
+                    return True
+                
+        if color == "white":
+            pawn_offsets = [(-1, -1), (-1, 1)]
+        else:
+            pawn_offsets = [(1, -1), (1, 1)]
+
+        for dy, dx in pawn_offsets:
+            ny, nx = ky + dy, kx + dx
+            if 0 <= ny < 8 and 0 <= nx < 8:
+                target = self.board[ny][nx]
+                if isinstance(target, Pawn) and target.color != color:
+                    return True   
+                
+        return False
+            
+                    
+                    
+                    
+         
+        
                     
                 
 
