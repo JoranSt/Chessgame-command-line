@@ -34,12 +34,12 @@ class Pawn(Piece):
                 moves.append((y + 2*direction, x))
         for nx in [x-1,x+1]:
             #try is there because it throws an error on empty spaces, it checks if a pawn can capture a piece and appends it to the validmoves list
-            target = board[ny][nx]
-            try:
-                if(0<=nx<8 and target != self.color):
-                    moves.append((ny,nx))
-            except:
-                pass
+            
+         
+            if 0 <= nx < 8:
+                target = board[ny][nx]
+                if target is not None and target.color != self.color:
+                    moves.append((ny, nx))
 
         return moves
 
