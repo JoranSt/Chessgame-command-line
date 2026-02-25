@@ -22,6 +22,7 @@ class Board:
         ny,nx = new_position
         piece = self.board[y][x]
         boardcopy = deepcopy(self.board) #used for simulations to see if it puts the king in check
+        
         if piece is None:
             return "no_piece"
         
@@ -29,6 +30,65 @@ class Board:
             return "wrong_turn"
         
         moves = piece.valid_moves(self.board, position)
+        # Castling
+        if isinstance(piece, King) and not piece.has_moved:
+        # Kingside castling
+            if nx == 6 and (y, 6) in moves:
+                rook = self.board[y][7]
+                if rook is None or rook.has_moved:
+                    return "rook can't castle"
+
+                # Simulate king moving through squares 5 and 6
+                for i in [5, 6]:
+                    boardcopy = deepcopy(self.board)
+                    boardcopy[y][i] = piece
+                    boardcopy[y][x] = None
+                    if self.is_check(turn, boardcopy):
+                        return "can't move through check"
+
+                # Move king
+                self.board[y][6] = piece
+                self.board[y][x] = None
+                piece.x = 6
+                piece.has_moved = True
+
+                # Move rook
+                self.board[y][5] = rook
+                self.board[y][7] = None
+                rook.x = 5
+                rook.has_moved = True
+
+                return "ok"
+
+            # Queenside castling
+            if nx == 2 and (y, 2) in moves:
+                rook = self.board[y][0]
+                if rook is None or rook.has_moved:
+                    return "rook can't castle"
+
+                # Simulate king moving through squares 3 and 2
+                for i in [3, 2]:
+                    boardcopy = deepcopy(self.board)
+                    boardcopy[y][i] = piece
+                    boardcopy[y][x] = None
+                    if self.is_check(turn, boardcopy):
+                        return "can't move through check"
+
+                # Move king
+                self.board[y][2] = piece
+                self.board[y][x] = None
+                piece.x = 2
+                piece.has_moved = True
+
+                # Move rook
+                self.board[y][3] = rook
+                self.board[y][0] = None
+                rook.x = 3
+                rook.has_moved = True
+
+                return "ok"
+                
+                
         if (ny,nx) in moves:
             boardcopy[ny][nx] = piece
             boardcopy[y][x] = None

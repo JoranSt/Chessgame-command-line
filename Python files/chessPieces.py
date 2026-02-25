@@ -50,6 +50,7 @@ class Pawn(Piece):
 class Rook(Piece):
     def __init__(self, color, has_moved = False):
         super().__init__(color)
+        self.has_moved = has_moved
         #set symbol
         if(self.color.lower() == "black"):
             self.symbol = '♖'
@@ -181,6 +182,7 @@ class King(Piece):
     def __init__(self, color, has_moved = False):
         super().__init__(color)
         #set symbol
+        self.has_moved = has_moved
         if(self.color.lower() == "black"):
             self.symbol = "♔"
         else:
@@ -189,6 +191,20 @@ class King(Piece):
         y, x = position
         moves = []
         directions = [(1,0),(-1,0),(0,1),(0,-1),(1,1),(-1,-1),(-1,1),(1,-1)]
+        if(self.has_moved == False):
+            if board[y][1] is None and board[y][2] is None and board[y][3] is None:
+                rook = board[y][0]
+                if rook and not rook.has_moved:
+                    moves.append((y, 2))
+
+            # Kingside castling (king moves to column 6)
+            if board[y][5] is None and board[y][6] is None:
+                rook = board[y][7]
+                if rook and not rook.has_moved:
+                    moves.append((y, 6))
+                
+                
+                
         for dy, dx in directions:
             #checks for valid moves it doesnt check for checks right now because those are stored within the pieces.
             ny, nx = y+dy, x+dx
@@ -199,4 +215,5 @@ class King(Piece):
                 target = board[ny][nx]
                 if(target == None or target.color != self.color):
                     moves.append((ny,nx))
+        
         return moves

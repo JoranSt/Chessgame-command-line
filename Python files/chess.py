@@ -32,13 +32,14 @@ class Chess:
             
             messages = {
                         "no_piece": "No piece at that square.",
-                        "wrong_turn": "That’s not your piece.",
-                        "invalid_target": "That piece can’t move there.",
-                        "king_in_check": "You can’t leave your king in check."
+                        "wrong_turn": "That's not your piece.",
+                        "invalid_target": "That piece can't move there.",
+                        "king_in_check": "You can't leave your king in check.",
+                        "can't move through check": "You can't move through check"
                     }
             if(result == "ok"):
                     self.turn = "black" if self.turn == "white" else "white"
-                    # now check for endgame
+                    #checks for endgame
                     if self.board.checkmate(self.turn):
                         self.board.display_board()
                         print(f"{self.turn} is checkmated!")
@@ -47,6 +48,7 @@ class Chess:
                         self.board.display_board()
                         print("Stalemate!")
                         break
+                    #prints statement from the move and updates the board
                     color, piece = self.board.piece_info([coordinates[2],coordinates[3]])
                     from_, to_ = movesplit[:2], movesplit[2:]
                     os.system('cls')
