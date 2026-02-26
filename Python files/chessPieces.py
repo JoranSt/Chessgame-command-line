@@ -18,7 +18,7 @@ class Pawn(Piece):
             self.symbol = '♟'
         
     #if on backrank promote
-    def valid_moves(self, board, position):
+    def valid_moves(self, board, position, lastpiece):
         y,x = position
         moves = []
         direction = -1 if self.color == "white" else 1
@@ -26,6 +26,8 @@ class Pawn(Piece):
 
         # one square forward
         ny = y + direction
+        
+        
         if 0 <= ny < 8 and board[ny][x] is None:
             moves.append((ny, x))
 
@@ -36,10 +38,31 @@ class Pawn(Piece):
             #try is there because it throws an error on empty spaces, it checks if a pawn can capture a piece and appends it to the validmoves list
             
          
-            if 0 <= nx < 8:
-                target = board[ny][nx]
-                if target is not None and target.color != self.color:
-                    moves.append((ny, nx))
+            if not 0 <= nx < 8:
+                continue
+            
+            target = board[ny][nx]
+            enpassant = board[y][nx]
+            
+            if target is not None and target.color != self.color:
+                moves.append((ny, nx))
+            
+            if enpassant is None or enpassant.color == self.color:
+                continue
+            
+            if lastpiece is None:
+                continue
+            
+            
+            old_pos = lastpiece[0]
+            
+            #dont need to check if its a pawn since i only pass the parameter lastpiece if its a pawn
+            
+            if(old_pos == (y+2*direction, nx)):
+                moves.append((ny,nx))
+            
+            
+          
 
         return moves
 

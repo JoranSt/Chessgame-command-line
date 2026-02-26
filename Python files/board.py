@@ -5,6 +5,7 @@ class Board:
         #initiate board and order
         self.board = [[None for _ in range(8)] for _ in range(8)]
         back_rank = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+        self.lastpiece = None
         # white pieces
         for x in range(8):
             self.board[7][x] = back_rank[x]("white")
@@ -14,7 +15,8 @@ class Board:
         for x in range(8):
             self.board[1][x] = Pawn("black")
             self.board[0][x] = back_rank[x]("black")
-            self.board[5][x] = Pawn("black")
+            self.board[4][4] = Pawn("black")
+            
         
 
     def move_piece(self,position,new_position, turn):
@@ -30,7 +32,7 @@ class Board:
         if piece.color != turn:
             return "wrong_turn"
         
-        moves = piece.valid_moves(self.board, position)
+        moves = self.valid_moves_for(position, self.lastpiece)
         # Castling
         if isinstance(piece, King) and not piece.has_moved:
         # Kingside castling
@@ -114,9 +116,17 @@ class Board:
                     else:
                         print("Not a valid option. Please choose Knight, Queen, Rook, or Bishop.")
                     
-                
+            if(isinstance(piece, Pawn) and nx != x and self.board[ny][nx] is None):
+                self.board[ny][nx] = piece
+                self.board[y][x] = None
+                self.board[y][nx] = None
+                self.lastpiece = ((y,x) , (ny,nx), piece) 
+                return "ok"
+            
             self.board[ny][nx] = piece
-            self.board[y][x] = None 
+            self.board[y][x] = None
+            
+            self.lastpiece = ((y,x) , (ny,nx), piece) 
             return "ok" 
         
         return "invalid_target"
@@ -141,10 +151,16 @@ class Board:
         return piece.color, piece.__class__.__name__
     
     #passes variables to the chesspieces to check for validmoves
-    def valid_moves_for(self, position):
+    def valid_moves_for(self, position, lastpiece):
         piece = self.board[position[0]][position[1]]
         if piece is None:
+            
             return []
+        
+        elif isinstance(piece, Pawn):
+            
+            return piece.valid_moves(self.board,position,lastpiece)
+        
         return piece.valid_moves(self.board, position)
     
     def display_board(self):
@@ -172,7 +188,7 @@ class Board:
             for x in range(8):
                 piece = self.board[y][x]
                 if(piece is not None and piece.color == turn):
-                    valid_moves = piece.valid_moves(self.board, [y,x])
+                    valid_moves = self.valid_moves_for([y,x], self.lastpiece)
                     for ny,nx in valid_moves:
                         boardcopy = deepcopy(self.board) #used for simulations to see if it puts the king in check
                         boardcopy[ny][nx] = piece
