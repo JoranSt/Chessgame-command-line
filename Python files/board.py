@@ -14,6 +14,7 @@ class Board:
         for x in range(8):
             self.board[1][x] = Pawn("black")
             self.board[0][x] = back_rank[x]("black")
+            self.board[5][x] = Pawn("black")
         
 
     def move_piece(self,position,new_position, turn):
@@ -88,13 +89,32 @@ class Board:
 
                 return "ok"
                 
-                
+        
         if (ny,nx) in moves:
             boardcopy[ny][nx] = piece
             boardcopy[y][x] = None
             if(self.is_check(turn, boardcopy) == True):
                 return "king_in_check"
-            
+            if isinstance(self.board[y][x], Pawn) and ny in (0, 7):
+                OptionList = {
+                    "knight": Knight, 
+                    "bishop": Bishop,
+                    "rook": Rook,
+                    "queen": Queen
+                }
+
+                while True:
+                    promotion = input("Promote pawn to (Knight, Queen, Rook, Bishop):\n")
+                    promotionPiece = OptionList.get(promotion.lower())  
+                    if promotionPiece is not None:
+                        # Create a new piece instance
+                        self.board[ny][nx] = promotionPiece(self.board[y][x].color)
+                        self.board[y][x] = None
+                        return "ok"
+                    else:
+                        print("Not a valid option. Please choose Knight, Queen, Rook, or Bishop.")
+                    
+                
             self.board[ny][nx] = piece
             self.board[y][x] = None 
             return "ok" 
